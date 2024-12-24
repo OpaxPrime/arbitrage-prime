@@ -1,0 +1,58 @@
+
+import React, { useState } from "react";
+import axios from "axios";
+
+const GenerateListing = () => {
+  const [productName, setProductName] = useState("");
+  const [description, setDescription] = useState("");
+  const [platforms, setPlatforms] = useState([]);
+  const [generatedListings, setGeneratedListings] = useState({});
+
+  const handleGenerate = async () => {
+    const response = await axios.post("http://localhost:8000/generate-listing", {
+      product_name: productName,
+      description: description,
+      platforms: platforms,
+    });
+    setGeneratedListings(response.data);
+  };
+
+  return (
+    <div>
+      <input
+        type="text"
+        placeholder="Product Name"
+        value={productName}
+        onChange={(e) => setProductName(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
+      <select
+        multiple
+        value={platforms}
+        onChange={(e) => setPlatforms([...e.target.selectedOptions].map(option => option.value))}
+      >
+        <option value="amazon">Amazon</option>
+        <option value="ebay">eBay</option>
+        <option value="shopify">Shopify</option>
+      </select>
+      <button onClick={handleGenerate}>Generate Listing</button>
+      <div>
+        {Object.entries(generatedListings).map(([platform, listing], index) => (
+          <div key={index}>
+            <strong>{platform}</strong>: {listing}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default GenerateListing;
+
+
+
